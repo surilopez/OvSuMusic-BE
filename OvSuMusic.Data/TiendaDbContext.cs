@@ -19,8 +19,8 @@ namespace OvSuMusic.Data
         {
         }
 
-        public virtual DbSet<DetalleOrden> DetalleOrdens { get; set; }
-        public virtual DbSet<Orden> Ordens { get; set; }
+        public virtual DbSet<DetalleOrden> DetallesOrden { get; set; }
+        public virtual DbSet<Orden> Ordenes { get; set; }
         public virtual DbSet<Perfil> Perfils { get; set; }
         public virtual DbSet<Producto> Productos { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
