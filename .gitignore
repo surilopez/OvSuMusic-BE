@@ -55,6 +55,8 @@ BenchmarkDotNet.Artifacts/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+OvSuMusic.WebApi/appsettings.json
+OvSuMusic.WebApi/appsettings.Development.json
 
 # StyleCop
 StyleCopReport.xml
