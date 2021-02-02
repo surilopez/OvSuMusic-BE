@@ -43,7 +43,7 @@ namespace OvSuMusic.WebApi.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Producto>> GetById(int id)
+        public async Task<ActionResult<Producto>> Get(int id)
         {
             var product = await productosRepo.ObtenerProductoAsync(id);
             if (product == null)
