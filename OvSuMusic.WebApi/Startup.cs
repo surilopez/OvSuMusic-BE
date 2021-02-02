@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OvSuMusic.Data;
+using OvSuMusic.Data.Contracts;
+using OvSuMusic.Data.Repositories;
 
 namespace OvSuMusic.WebApi
 {
@@ -28,7 +30,10 @@ namespace OvSuMusic.WebApi
         {
             services.AddControllers();
 
-            services.AddDbContext<TiendaDbContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("default_connection")));
+            services.AddDbContext<TiendaDbContext>(opt =>
+            opt.UseSqlServer(configuration.GetConnectionString("default_connection")));
+
+            services.AddScoped<IProductosRepo, ProductosRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
