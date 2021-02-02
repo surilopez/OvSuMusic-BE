@@ -20,8 +20,11 @@ namespace OvSuMusic.Data.Repositories
         }
         public async Task<bool> Actualizar(Producto producto)
         {
-            _contexto.Productos.Attach(producto);
-            _contexto.Entry(producto).State = EntityState.Modified;
+            var productBd = await ObtenerProductoAsync(producto.Id);
+            productBd.Nombre = producto.Nombre;
+            productBd.Precio = producto.Precio;
+            //_contexto.Productos.Attach(producto);
+            //_contexto.Entry(producto).State = EntityState.Modified;
             try
             {
                 return await _contexto.SaveChangesAsync() > 0 ? true : false;
@@ -35,6 +38,9 @@ namespace OvSuMusic.Data.Repositories
 
         public async Task<Producto> Agregar(Producto producto)
         {
+            producto.Estatus = EstatusProducto.Activo;
+            producto.FechaRegistro = DateTime.UtcNow;
+
             _contexto.Productos.Add(producto);
             try
             {
@@ -42,7 +48,7 @@ namespace OvSuMusic.Data.Repositories
             }
             catch (Exception excepcion)
             {
-                ;
+                return null;
             }
 
             return producto;

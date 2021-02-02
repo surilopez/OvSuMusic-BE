@@ -48,7 +48,7 @@ namespace OvSuMusic.WebApi.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Producto>> Get(int id)
+        public async Task<ActionResult<ProductoDto>> Get(int id)
         {
             var product = await _productosRepo.ObtenerProductoAsync(id);
             if (product == null)
@@ -56,23 +56,26 @@ namespace OvSuMusic.WebApi.Controllers
                 return NotFound();
             }
 
-            return product;
+            return  _mapper.Map<ProductoDto>(product);
         }
 
         // POST: api/Productos
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Producto>> Post(Producto producto)
+        public async Task<ActionResult<Producto>> Post(ProductoDto productoDto)
         {
             try
             {
-                var newProduct = await _productosRepo.Agregar(producto);
+                var prod = _mapper.Map<Producto>(productoDto);
+                var newProduct = await _productosRepo.Agregar(prod);
                 if (newProduct == null)
                 {
                     return BadRequest();
                 }
-                return CreatedAtAction(nameof(Post), new { id = newProduct.Id }, producto);
+
+                var newProductDto= _mapper.Map<ProductoDto>(prod);
+                return CreatedAtAction(nameof(Post), new { id = newProductDto.Id }, newProductDto);
             }
             catch (Exception ex)
             {
@@ -86,20 +89,20 @@ namespace OvSuMusic.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Producto>> Put(int id, [FromBody] Producto producto)
+        public async Task<ActionResult<ProductoDto>> Put(int id, [FromBody] ProductoDto productoDto)
         {
             try
             {
-                if (producto == null)
+                if (productoDto == null)
                 {
                     return NotFound();
                 }
-
+                var producto = _mapper.Map<Producto>(productoDto);
                 var result = await _productosRepo.Actualizar(producto);
                 if (!result)
                     return BadRequest();
 
-                return producto;
+                return productoDto;
             }
             catch (Exception ex)
             {
