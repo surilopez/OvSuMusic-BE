@@ -11,7 +11,7 @@ using OvSuMusic.Models.Enumerations;
 namespace OvSuMusic.Data.Repositories
 {
 
-    public class ProductosRepo: IProductosRepo
+    public class ProductosRepo : IProductosRepo
     {
         private TiendaDbContext _contexto;
 
@@ -75,13 +75,15 @@ namespace OvSuMusic.Data.Repositories
         public async Task<Producto> ObtenerProductoAsync(int id)
         {
             return await _contexto.Productos
-                               .SingleOrDefaultAsync(c => c.Id == id);
+                               .SingleOrDefaultAsync(c => c.Id == id && c.Estatus == EstatusProducto.Activo);
         }
 
         public async Task<List<Producto>> ObtenerProductosAsync()
         {
-            return await _contexto.Productos.OrderBy(u => u.Nombre)
-                                            .ToListAsync();
+            return await _contexto.Productos
+                .Where(u => u.Estatus == EstatusProducto.Activo)
+                .OrderBy(u => u.Nombre)
+                .ToListAsync();
         }
 
 

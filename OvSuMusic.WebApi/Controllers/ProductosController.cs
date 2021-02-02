@@ -106,8 +106,24 @@ namespace OvSuMusic.WebApi.Controllers
 
         //DELETE: api/Productos/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete(int id)
         {
+            try
+            {
+                var result = await productosRepo.Eliminar(id);
+                if (!result)
+                {
+                    return BadRequest();
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest();
+            }
         }
 
     }
