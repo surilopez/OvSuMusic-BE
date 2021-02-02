@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OvSuMusic.Data\OvSuMusic.Data.csproj" />
+    <ProjectReference Include="..\OvSuMusic.Dtos\OvSuMusic.Dtos.csproj" />
+    <ProjectReference Include="..\OvSuMusic.Models\OvSuMusic.Models.csproj" />
   </ItemGroup>
 
 </Project>

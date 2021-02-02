@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OvSuMusic.Data;
 using OvSuMusic.Data.Contracts;
+using OvSuMusic.Dtos;
 using OvSuMusic.Models;
 
 namespace OvSuMusic.WebApi.Controllers
@@ -16,22 +18,25 @@ namespace OvSuMusic.WebApi.Controllers
     [ApiController]
     public class ProductosController : ControllerBase
     {
-        private IProductosRepo productosRepo;
+        private IProductosRepo _productosRepo;
+        private readonly IMapper _mapper;
 
-        public ProductosController(IProductosRepo productosRepo)
+        public ProductosController(IProductosRepo productosRepo, IMapper mapper )
         {
-            this.productosRepo = productosRepo;
+            this._productosRepo = productosRepo;
+            this._mapper = mapper;
         }
 
         // GET: api/Productos
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<Producto>>> Get()
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> Get()
         {
             try
             {
-                return await productosRepo.ObtenerProductosAsync();
+                var productos= await _productosRepo.ObtenerProductosAsync();
+                return _mapper.Map<List<ProductoDto>>(productos);
             }
             catch (Exception ex)
             {
@@ -45,7 +50,7 @@ namespace OvSuMusic.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Producto>> Get(int id)
         {
-            var product = await productosRepo.ObtenerProductoAsync(id);
+            var product = await _productosRepo.ObtenerProductoAsync(id);
             if (product == null)
             {
                 return NotFound();
@@ -62,7 +67,7 @@ namespace OvSuMusic.WebApi.Controllers
         {
             try
             {
-                var newProduct = await productosRepo.Agregar(producto);
+                var newProduct = await _productosRepo.Agregar(producto);
                 if (newProduct == null)
                 {
                     return BadRequest();
@@ -90,7 +95,7 @@ namespace OvSuMusic.WebApi.Controllers
                     return NotFound();
                 }
 
-                var result = await productosRepo.Actualizar(producto);
+                var result = await _productosRepo.Actualizar(producto);
                 if (!result)
                     return BadRequest();
 
@@ -112,7 +117,7 @@ namespace OvSuMusic.WebApi.Controllers
         {
             try
             {
-                var result = await productosRepo.Eliminar(id);
+                var result = await _productosRepo.Eliminar(id);
                 if (!result)
                 {
                     return BadRequest();
