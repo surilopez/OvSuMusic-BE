@@ -78,15 +78,36 @@ namespace OvSuMusic.WebApi.Controllers
 
         //PUT api/productos/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Producto producto)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Producto>> Put(int id, [FromBody] Producto producto)
         {
-            if (producto == null)
+            try
             {
-                return NotFound();
+                if (producto == null)
+                {
+                    return NotFound();
+                }
+
+                var result = await productosRepo.Actualizar(producto);
+                if (!result)
+                    return BadRequest();
+
+                return producto;
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest();
             }
 
-            var result = 
+        }
 
+        //DELETE: api/Productos/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
         }
 
     }
