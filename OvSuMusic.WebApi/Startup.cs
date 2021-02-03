@@ -38,8 +38,10 @@ namespace OvSuMusic.WebApi
             services.AddDbContext<TiendaDbContext>(opt =>
             opt.UseSqlServer(configuration.GetConnectionString("default_connection")));
 
-            services.AddScoped<IProductosRepo, ProductosRepo>();
             services.AddScoped<IGenericRepo<Perfil>, RepoPerfiles>();
+            services.AddScoped<IProductosRepo, ProductosRepo>();
+            services.AddScoped<IOrdenesRepo, RepoOrdenes>();
+          
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
