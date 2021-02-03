@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OvSuMusic.Data.Contracts;
 using OvSuMusic.Models;
 using OvSuMusic.Models.Enumerations;
@@ -13,10 +14,12 @@ namespace OvSuMusic.Data.Repositories
     public class ProductosRepo : IProductosRepo
     {
         private TiendaDbContext _contexto;
+        private readonly ILogger<ProductosRepo> _logger;
 
-        public ProductosRepo(TiendaDbContext contexto)
+        public ProductosRepo(TiendaDbContext contexto, ILogger<ProductosRepo> logger)
         {
             _contexto = contexto;
+            this._logger = logger;
         }
         public async Task<bool> Actualizar(Producto producto)
         {
@@ -29,9 +32,9 @@ namespace OvSuMusic.Data.Repositories
             {
                 return await _contexto.SaveChangesAsync() > 0 ? true : false;
             }
-            catch (Exception excepcion)
+            catch (Exception ex)
             {
-                ;
+                _logger.LogError($"Update Produt Error {nameof(Actualizar)}: ${ex.Message}");
             }
             return false;
         }
@@ -46,8 +49,9 @@ namespace OvSuMusic.Data.Repositories
             {
                 await _contexto.SaveChangesAsync();
             }
-            catch (Exception excepcion)
+            catch (Exception ex)
             {
+                _logger.LogError($"Add Produt Error {nameof(Agregar)}: ${ex.Message}");
                 return null;
             }
 
@@ -69,9 +73,9 @@ namespace OvSuMusic.Data.Repositories
             {
                 return (await _contexto.SaveChangesAsync() > 0 ? true : false);
             }
-            catch (Exception excepcion)
+            catch (Exception ex)
             {
-                ;
+                _logger.LogError($"Delete Produt Error {nameof(Eliminar)}: ${ex.Message}");
             }
             return false;
 

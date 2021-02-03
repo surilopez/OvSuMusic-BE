@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OvSuMusic.Data;
 using OvSuMusic.Data.Contracts;
 using OvSuMusic.Dtos;
@@ -20,11 +21,13 @@ namespace OvSuMusic.WebApi.Controllers
     {
         private IProductosRepo _productosRepo;
         private readonly IMapper _mapper;
+        private readonly ILogger<ProductosController> _logger;
 
-        public ProductosController(IProductosRepo productosRepo, IMapper mapper )
+        public ProductosController(IProductosRepo productosRepo, IMapper mapper, ILogger<ProductosController> logger)
         {
             this._productosRepo = productosRepo;
             this._mapper = mapper;
+            this._logger = logger;
         }
 
         // GET: api/Productos
@@ -35,11 +38,12 @@ namespace OvSuMusic.WebApi.Controllers
         {
             try
             {
-                var productos= await _productosRepo.ObtenerProductosAsync();
+                var productos = await _productosRepo.ObtenerProductosAsync();
                 return _mapper.Map<List<ProductoDto>>(productos);
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Get Produts Error {nameof(Get)}: ${ex.Message}");
                 return BadRequest();
             }
         }
@@ -48,15 +52,24 @@ namespace OvSuMusic.WebApi.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ProductoDto>> Get(int id)
+        public async Task<ActionResult<ProductoDto>> GetById(int id)
         {
-            var product = await _productosRepo.ObtenerProductoAsync(id);
-            if (product == null)
+            try
             {
-                return NotFound();
-            }
+                var product = await _productosRepo.ObtenerProductoAsync(id);
+                if (product == null)
+                {
+                    return NotFound();
+                }
 
-            return  _mapper.Map<ProductoDto>(product);
+                return _mapper.Map<ProductoDto>(product);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Get Produt Error {nameof(GetById)}: ${ex.Message}");
+                throw;
+            }
+           
         }
 
         // POST: api/Productos
@@ -74,12 +87,12 @@ namespace OvSuMusic.WebApi.Controllers
                     return BadRequest();
                 }
 
-                var newProductDto= _mapper.Map<ProductoDto>(prod);
+                var newProductDto = _mapper.Map<ProductoDto>(prod);
                 return CreatedAtAction(nameof(Post), new { id = newProductDto.Id }, newProductDto);
             }
             catch (Exception ex)
             {
-
+                _logger.LogError($"Add Produt Error {nameof(Post)}: ${ex.Message}");
                 return BadRequest();
             }
         }
@@ -106,7 +119,7 @@ namespace OvSuMusic.WebApi.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError($"Update Produt Error {nameof(Put)}: ${ex.Message}");
                 return BadRequest();
             }
 
@@ -129,7 +142,7 @@ namespace OvSuMusic.WebApi.Controllers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError($"Delete Produt Error {nameof(Delete)}: ${ex.Message}");
                 return BadRequest();
             }
         }
