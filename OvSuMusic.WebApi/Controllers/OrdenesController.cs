@@ -52,6 +52,7 @@ namespace OvSuMusic.WebApi.Controllers
             try
             {
                 var ordenes = await _ordenesRepo.ObtenerTodosConDetallesAsync();
+               
                 return _mapper.Map<List<OrdenDto>>(ordenes);
             }
             catch (Exception ex)
@@ -86,7 +87,8 @@ namespace OvSuMusic.WebApi.Controllers
             {
                 return NotFound();
             }
-            return _mapper.Map<OrdenDto>(orden);
+            var result = _mapper.Map<OrdenDto>(orden);
+            return result;
         }
 
         // POST: api/ordenes
