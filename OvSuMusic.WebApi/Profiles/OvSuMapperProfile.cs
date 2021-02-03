@@ -8,11 +8,12 @@ using OvSuMusic.Models;
 
 namespace OvSuMusic.WebApi.Profiles
 {
-    public class ProductoProfile : Profile
+    public class OvSuMapperProfile : Profile
     {
-        public ProductoProfile()
+        public OvSuMapperProfile()
         {
             this.CreateMap<Producto, ProductoDto>().ReverseMap();
+            this.CreateMap<Perfil, PerfilDto>().ReverseMap();
         }
     }
 }

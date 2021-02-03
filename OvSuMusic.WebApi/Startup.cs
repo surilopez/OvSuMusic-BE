@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using OvSuMusic.Data;
 using OvSuMusic.Data.Contracts;
 using OvSuMusic.Data.Repositories;
+using OvSuMusic.Models;
 using Serilog;
 
 namespace OvSuMusic.WebApi
@@ -38,6 +39,7 @@ namespace OvSuMusic.WebApi
             opt.UseSqlServer(configuration.GetConnectionString("default_connection")));
 
             services.AddScoped<IProductosRepo, ProductosRepo>();
+            services.AddScoped<IGenericRepo<Perfil>, RepoPerfiles>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
