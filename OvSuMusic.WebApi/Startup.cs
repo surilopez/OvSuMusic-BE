@@ -92,8 +92,7 @@ namespace OvSuMusic.WebApi
                 options.AddPolicy("CorsPolicy",
                     builder => builder.AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                    .AllowAnyHeader());
             });
 
 
@@ -109,9 +108,10 @@ namespace OvSuMusic.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
+           
+            app.UseCors("CorsPolicy");
             app.UseRouting();
             app.UseAuthentication();
-            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
