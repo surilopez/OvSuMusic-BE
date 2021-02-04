@@ -14,10 +14,10 @@ namespace OvSuMusic.Data.Repositories
     public class RepoUsuarios : IUsuariosRepo
     {
         private readonly TiendaDbContext _contexto;
-        private readonly ILogger<RepoUsuarios> _logger;        
+        private readonly ILogger<RepoUsuarios> _logger;
         private readonly IPasswordHasher<Usuario> _passwordHasher;
         private DbSet<Usuario> _dbSet;
-        public RepoUsuarios(TiendaDbContext contexto, 
+        public RepoUsuarios(TiendaDbContext contexto,
             ILogger<RepoUsuarios> logger,
             IPasswordHasher<Usuario> passwordHasher)
         {
@@ -38,7 +38,7 @@ namespace OvSuMusic.Data.Repositories
 
             usuarioDb.Nombre = entity.Nombre;
             usuarioDb.Apellidos = entity.Apellidos;
-            usuarioDb.Email = entity.Email;            
+            usuarioDb.Email = entity.Email;
             try
             {
                 return await _contexto.SaveChangesAsync() > 0 ? true : false;
@@ -67,7 +67,7 @@ namespace OvSuMusic.Data.Repositories
         }
 
         public async Task<bool> CambiarContrasena(Usuario usuario)
-        {            
+        {
             var usuarioBd = await _dbSet.FirstOrDefaultAsync(u => u.Id == usuario.Id);
             usuarioBd.Password = _passwordHasher.HashPassword(usuarioBd, usuario.Password);
             try
@@ -99,7 +99,7 @@ namespace OvSuMusic.Data.Repositories
         public async Task<bool> Eliminar(int id)
         {
             var entity = await _dbSet.SingleOrDefaultAsync(u => u.Id == id);
-            entity.Estatus = EstatusUsuario.Inactivo;            
+            entity.Estatus = EstatusUsuario.Inactivo;
             try
             {
                 return (await _contexto.SaveChangesAsync() > 0 ? true : false);
@@ -111,28 +111,51 @@ namespace OvSuMusic.Data.Repositories
             return false;
         }
 
+        public async Task<(bool result, Usuario usuario)> LoginDataValidation(Usuario userDataLogin)
+        {
+
+
+            var usuarioBd = await _dbSet
+                                    .Include(u => u.Perfil)
+                                    .FirstOrDefaultAsync(u => u.Username == userDataLogin.Username);
+            if (usuarioBd != null)
+            {
+                try
+                {
+                    var resultado = _passwordHasher.VerifyHashedPassword(usuarioBd, usuarioBd.Password, userDataLogin.Password);
+                    return (resultado == PasswordVerificationResult.Success ? true : false, usuarioBd);
+                }
+                catch (Exception excepcion)
+                {
+                    _logger.LogError($"Error en {nameof(LoginDataValidation)}: " + excepcion.Message);
+                }
+            }
+            return (false, null);
+
+        }
+
         public async Task<Usuario> ObtenerAsync(int id)
         {
             return await _dbSet.Include(usuario => usuario.Perfil)
-                                .SingleOrDefaultAsync(c => c.Id == id && c.Estatus== EstatusUsuario.Activo);
+                                .SingleOrDefaultAsync(c => c.Id == id && c.Estatus == EstatusUsuario.Activo);
         }
 
-     
+
 
         public async Task<IEnumerable<Usuario>> ObtenerTodosAsync()
         {
             return await _dbSet.Include(usuario => usuario.Perfil)
-                                .Where(u=>u.Estatus==EstatusUsuario.Activo)
+                                .Where(u => u.Estatus == EstatusUsuario.Activo)
                                 .ToListAsync();
         }
 
         public async Task<bool> ValidarContrasena(Usuario usuario)
         {
-            var usuarioBd = await _dbSet.FirstOrDefaultAsync(u => u.Id == usuario.Id);                        
+            var usuarioBd = await _dbSet.FirstOrDefaultAsync(u => u.Id == usuario.Id);
             try
             {
                 var resultado = _passwordHasher.VerifyHashedPassword(usuarioBd, usuarioBd.Password, usuario.Password);
-                return resultado == PasswordVerificationResult.Success ? true : false;                                
+                return resultado == PasswordVerificationResult.Success ? true : false;
             }
             catch (Exception excepcion)
             {
@@ -140,5 +163,9 @@ namespace OvSuMusic.Data.Repositories
             }
             return false;
         }
+
+
+
+
     }
 }

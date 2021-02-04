@@ -9,5 +9,6 @@ namespace OvSuMusic.Data.Contracts
         Task<bool> CambiarContrasena(Usuario usuario);
         Task<bool> CambiarPerfil(Usuario usuario);
         Task<bool> ValidarContrasena(Usuario usuario);
+        Task<(bool result, Usuario usuario)> LoginDataValidation(Usuario userDataLogin);
     }
 }

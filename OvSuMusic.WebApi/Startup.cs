@@ -19,6 +19,7 @@ using OvSuMusic.Data;
 using OvSuMusic.Data.Contracts;
 using OvSuMusic.Data.Repositories;
 using OvSuMusic.Models;
+using OvSuMusic.WebApi.Services;
 using Serilog;
 
 namespace OvSuMusic.WebApi
@@ -49,7 +50,7 @@ namespace OvSuMusic.WebApi
             services.AddScoped<IUsuariosRepo, RepoUsuarios>();
 
             services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
-
+            services.AddSingleton<TokenService>();
 
             //Accedemos a la sección JwtSettings del archivo appsettings.json
             var jwtSettings = configuration.GetSection("JwtConfig");
